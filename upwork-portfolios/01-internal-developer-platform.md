@@ -33,8 +33,6 @@ AERQ, a company providing digital solutions for the aviation industry, faced sev
 
 ![IDP Main Architecture](diagrams/images/01-idp-main.png)
 
-📄 [View Mermaid/PlantUML Source](diagrams/01-idp-architecture-diagram.md)
-
 ---
 
 ## Technical Implementation
@@ -84,19 +82,6 @@ infrastructure/
 ### 3. GitOps Workflow
 
 ![GitOps Workflow](diagrams/images/01-idp-gitops.png)
-
-```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Developer   │     │    GitLab    │     │    ArgoCD    │
-│  Push Code   │────▶│   Pipeline   │────▶│    Sync      │
-└──────────────┘     └──────────────┘     └──────────────┘
-                            │                     │
-                            ▼                     ▼
-                     ┌──────────────┐     ┌──────────────┐
-                     │ Docker Image │     │  Kubernetes  │
-                     │   + Helm     │     │   Cluster    │
-                     └──────────────┘     └──────────────┘
-```
 
 ### 4. Helm Chart Standardization
 

@@ -456,6 +456,90 @@ def diagram_05_cisco_scaling():
         min_nodes >> scaled >> max_nodes
 
 
+def diagram_02_edge_device():
+    """Edge Device Architecture - K3s on CoreOS"""
+    with Diagram(
+        "Edge Device Architecture",
+        filename=f"{OUTPUT_DIR}/02-edge-device",
+        show=False,
+        direction="TB",
+        graph_attr=graph_attr,
+    ):
+        with Cluster("Edge Device (CoreOS)"):
+            with Cluster("K3s Cluster"):
+                agent = Pod("TMS Agent")
+                sync = Pod("Sync Service")
+                localdb = PostgreSQL("Local DB")
+                config = Pod("Config Watcher")
+            
+            with Cluster("System Services"):
+                vpn_client = Nginx("VPN Client")
+                updates = Docker("Auto Updates")
+                monitor = Prometheus("Monitoring")
+        
+        cloud = EKS("Cloud API")
+        terminals = Mobile("Terminals")
+        
+        agent >> localdb
+        sync >> cloud
+        agent >> terminals
+        vpn_client >> cloud
+
+
+def diagram_02_cicd_pipeline():
+    """Edge-Cloud CI/CD Pipeline"""
+    with Diagram(
+        "CI/CD Pipeline",
+        filename=f"{OUTPUT_DIR}/02-cicd-pipeline",
+        show=False,
+        direction="LR",
+        graph_attr=graph_attr,
+    ):
+        with Cluster("Source"):
+            commit = Github("Commit Code")
+        
+        with Cluster("Build"):
+            build = Docker("Build Docker")
+            test = Docker("Run E2E Tests")
+        
+        with Cluster("Cloud Deploy"):
+            staging = EKS("Staging EKS")
+            prod = EKS("Production EKS")
+        
+        with Cluster("Edge Deploy"):
+            iso = Docker("Edge ISO Build")
+            edge = EC2("Edge Devices")
+        
+        commit >> build >> test >> staging >> prod
+        test >> iso >> edge
+
+
+def diagram_04_incident_response():
+    """edX - Incident Response Flow"""
+    with Diagram(
+        "Incident Response Flow",
+        filename=f"{OUTPUT_DIR}/04-incident-response",
+        show=False,
+        direction="LR",
+        graph_attr=graph_attr,
+    ):
+        with Cluster("Detection"):
+            alert = Datadog("Alert Trigger")
+        
+        with Cluster("Response"):
+            page = User("PagerDuty")
+            triage = User("Triage (5min)")
+        
+        with Cluster("Resolution"):
+            runbook = Docker("Runbook Lookup")
+            fix = EKS("Rollback/Fix")
+        
+        with Cluster("Post-Incident"):
+            rca = Docker("RCA & Postmortem")
+        
+        alert >> page >> triage >> runbook >> fix >> rca
+
+
 if __name__ == "__main__":
     print("Generating architecture diagrams...")
     print(f"Output directory: {OUTPUT_DIR}")
@@ -467,6 +551,8 @@ if __name__ == "__main__":
     
     print("2. Hybrid Edge-Cloud Architecture (ChaiOne)...")
     diagram_02_edge_cloud_main()
+    diagram_02_edge_device()
+    diagram_02_cicd_pipeline()
     
     print("3. HCL Commerce Migration (Parker)...")
     diagram_03_hcl_main()
@@ -475,6 +561,7 @@ if __name__ == "__main__":
     print("4. edX SRE Platform...")
     diagram_04_edx_main()
     diagram_04_edx_migration()
+    diagram_04_incident_response()
     
     print("5. Cisco Live Event Platform...")
     diagram_05_cisco_main()

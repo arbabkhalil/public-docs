@@ -115,7 +115,7 @@ pandoc 01-internal-developer-platform.md -o portfolio-idp.pdf
 ## 🔗 Upwork Portfolio Upload Tips
 
 1. **PDF Format** - Convert markdown to PDF for cleaner presentation
-2. **Include Diagrams** - Export Mermaid diagrams as images, embed in PDF
+2. **Include Diagrams** - Use PNG diagrams from `diagrams/images/` folder
 3. **One Project Per Portfolio Item** - Don't combine multiple projects
 4. **Add Cover Image** - Use architecture diagram as cover
 5. **Keep Description Short** - Link to full PDF in description
